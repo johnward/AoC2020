@@ -1,6 +1,7 @@
 use std::env::args;
 use std::result::Result;
 
+
 fn main()  -> Result<(), Box<dyn std::error::Error>> {
     let filename = args().nth(1).ok_or("I need a filename")?;
 
@@ -15,14 +16,19 @@ fn main()  -> Result<(), Box<dyn std::error::Error>> {
     }
 
     let entries2: Vec<i32> = entries.clone();
+    let entries3: Vec<i32> = entries.clone();
 
-    for base_number in entries.iter() {
+    for number1 in entries.iter() {
 
-        for comp_number in entries2.iter() {
-            if (base_number + comp_number) == 2020 {
+        for number2 in entries2.iter() {
+            for number3 in entries3.iter() {
 
-                let answer = base_number * comp_number;
-                println!("Happy Days, answer is {}", answer);
+                if (number1 + number2 + number3) == 2020 {
+
+                    let answer = number1 * number2 * number3;
+                    println!("Three Numbers are: {}, {}, {}", number1, number2, number3);
+                    println!("Happy Days, answer is {}", answer);
+                }
             }
         }
     }
