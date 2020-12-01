@@ -9,19 +9,20 @@ fn main()  -> Result<(), Box<dyn std::error::Error>> {
     let mut entries = Vec::new();
 
     // Read file into Vec
-    let base = 10;
     for line in content.lines() {
-        let number = line.chars().map(|c| c.to_digit(base).unwrap()).sum::<u32>();
+        let number: i32 = line.parse().unwrap_or(0);
         entries.push(number);
     }
 
-    let entries2: Vec<u32> = entries.clone();
+    let entries2: Vec<i32> = entries.clone();
 
     for base_number in entries.iter() {
 
         for comp_number in entries2.iter() {
             if (base_number + comp_number) == 2020 {
-                println!("Happy Days!");
+
+                let answer = base_number * comp_number;
+                println!("Happy Days, answer is {}", answer);
             }
         }
     }
