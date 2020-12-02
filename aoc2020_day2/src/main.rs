@@ -9,13 +9,16 @@ fn main()  -> Result<(), Box<dyn std::error::Error>> {
     let mut password_count = 0;
 
     for line in content.lines() {
+
+        // split into password and rulesS
         let comps: Vec<&str> = line.split(':').collect();
         let rules = comps[0];
-        let password: &str = comps[1];
+        let password: &str = comps[1].trim();
 
         println!("rules: {}", rules);
         println!("password: {}", password);
 
+        // split up the high and low chars positions, and the actual char
         let rule_comps: Vec<&str> = rules.split(' ').collect();
 
         let letter = rule_comps[1];
@@ -26,8 +29,13 @@ fn main()  -> Result<(), Box<dyn std::error::Error>> {
         println!("Letter: {}", letter);
         println!("Nums: {} {}", nums[0], nums[1]);
 
-        let matches: Vec<&str> = password.matches(letter).collect();
-        if number_low <= matches.iter().count() && matches.iter().count() <= number_high {
+        // Get the chars at the two positions
+        let pass_string = String::from(password);
+        let str_one = pass_string.chars().nth(number_low-1).unwrap();
+        let str_two = pass_string.chars().nth(number_high-1).unwrap();
+
+        // Check if the char is in one of these positions
+        if str_one.eq(&letter.chars().nth(0).unwrap()) ^ str_two.eq(&letter.chars().nth(0).unwrap()) {
             password_count += 1;
         } 
     }
