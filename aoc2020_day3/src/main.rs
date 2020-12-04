@@ -1,7 +1,7 @@
 use std::env::args;
 use std::result::Result;
 
-fn part1(content: &String, right: usize, down: usize) -> u32 {
+fn part1(content: &String, right: usize, down: usize) -> u64 {
 
     let mut string_position = right;
 
@@ -20,37 +20,20 @@ fn part1(content: &String, right: usize, down: usize) -> u32 {
                 string_position = (string_position + right) - x.len();
             }
             else {
-                string_position += 3;
+                string_position += right;
             }
 
             count
         }).sum()
 }
 
-fn part2(content: &String) -> u32 {
-    let mut total = part1(&content, 1, 1);
+fn part2(content: &String) -> u64 {
+    let mut total:u64 = part1(&content, 1, 1);
     total *= part1(&content, 3, 1);
     total *= part1(&content, 5, 1);
     total *= part1(&content, 7, 1);
     total *= part1(&content, 1, 2);
     total
-}
-
-
-#[cfg(test)]
-mod test {
-    use super::*;
-
-    #[test]
-    fn testcase_part1() {
-        //assert_eq!(x, x);
-
-    }
-
-    #[test]
-    fn testcase_part2() {
-        //assert_eq!(x, x);
-    }
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
