@@ -43,14 +43,13 @@ mod test {
 
     #[test]
     fn testcase_part1() {
-        //let input = [1721, 979, 366, 299, 675, 1456];
-        //assert_eq!(part1(&input), 514579);
+        //assert_eq!(x, x);
+
     }
 
     #[test]
     fn testcase_part2() {
-        //let input = [1721, 979, 366, 299, 675, 1456];
-        //assert_eq!(part2(&input), 241861950);
+        //assert_eq!(x, x);
     }
 }
 
