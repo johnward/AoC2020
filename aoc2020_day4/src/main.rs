@@ -1,63 +1,134 @@
 use std::env::args;
 use std::result::Result;
-use std::collections::HashMap;
 
 
-fn part1(content: &String) -> (u64, Vec<HashMap<String, String>>) {
-    let mut byr = false; //(Birth Year)
-    let mut iyr = false; //(Issue Year)
-    let mut eyr = false; //(Expiration Year)
-    let mut hgt = false; //(Height)
-    let mut hcl = false; //(Hair Color)
-    let mut ecl = false; //(Eye Color)
-    let mut pid = false; //(Passport ID)
-    let mut cid = false; //(Country ID) - Optional
+#[derive(Debug, Clone)]
+struct Passport {
+    byr: String, //(Birth Year)
+    iyr: String, //(Issue Year)
+    eyr: String, //(Expiration Year)
+    hgt: String, //(Height)
+    hcl: String, //(Hair Color)
+    ecl: String, //(Eye Color)
+    pid: String, //(Passport ID)
+    cid: String, //(Country ID) - Optional
+}
 
-    let mut valid_passports = 0;
-    let mut passports_processed = 0;
+impl Passport {
+    pub fn new() -> Passport {
+        Passport {
+            byr: String::from(""), //(Birth Year)
+            iyr: String::from(""), //(Issue Year)
+            eyr: String::from(""), //(Expiration Year)
+            hgt: String::from(""), //(Height)
+            hcl: String::from(""), //(Hair Color)
+            ecl: String::from(""), //(Eye Color)
+            pid: String::from(""), //(Passport ID)
+            cid: String::from(""),    
+        }
+    }
 
-    let tokens = content.split_whitespace()
-        .map(|s| {
-                if s != "" {
-                    let key_values: Vec<&str>= s.split(|t| t == ':').collect();
+    pub fn isvalid(&self) -> bool {
+        self.byr != "" && self.iyr != "" && self.eyr != "" && self.hgt != "" && self.hcl != "" && self.ecl != "" && self.pid != ""
+    }
+}
+
+fn part1(passports: Vec<Passport>) -> usize {
+    passports.iter()
+        .map(|p| {
+            if p.isvalid() {
+                1
+            } else {
+                0
+            }
+        }).sum()
+}
+
+// fn part1(content: &String) -> (u64, Vec<HashMap<String, String>>) {
+
+//     let mut valid_passports = 0;
+//     let mut passports_processed = 0;
+
+//     let passports = content.split_whitespace()
+//         .map(|s| {
+//                 if s != "" {
+//                     let key_values: Vec<&str>= s.split(|t| t == ':').collect();
+//                     if key_values.len() == 2 {
+//                     match key_values[0] {
+//                         "byr" => byr = true,
+//                         "iyr" => iyr = true,
+//                         "eyr" => eyr = true,
+//                         "hgt" => hgt = true,
+//                         "hcl" => hcl = true,
+//                         "ecl" => ecl = true,
+//                         "pid" => pid = true,
+//                         "cid" => cid = true,
+//                         _      => {
+//                                 println!("Error")
+//                                 }
+//                         }
+//                     } 
+//                     if byr && iyr && eyr && hgt && hcl && ecl && pid
+//                     {
+//                         valid_passports += 1;
+//                     }
+//                 }
+//                 else
+//                 {
+//                     passports_processed += 1;
+//                     byr = false; //(Birth Year)
+//                     iyr = false; //(Issue Year)
+//                     eyr = false; //(Expiration Year)
+//                     hgt = false; //(Height)
+//                     hcl = false; //(Hair Color)
+//                     ecl = false; //(Eye Color)
+//                     pid = false; //(Passport ID)
+//                     cid = false; //(Country ID) - Optional
+//                 }
+                
+//                 (String::from(key_values[0]), String::from(key_values[1]))
+//         }).collect();
+
+//         (valid_passports, tokens)
+
+// }
+
+fn read_passports(content: &String) -> Vec<Passport> {
+
+    let mut passports: Vec<Passport> = Vec::new();
+    let mut passport_count = 0;
+    let mut passport = Passport::new();
+
+    let count: usize = content.split_whitespace()
+    .map( |s| {
+        if s == "" {
+            passport_count += 1;
+            passports.push(passport.clone()); // push existing passport as it is complete
+            passport = Passport::new(); // create a new passport
+        } else {
+            let key_values: Vec<&str>= s.split(|t| t == ':').collect();
                     if key_values.len() == 2 {
                     match key_values[0] {
-                        "byr" => byr = true,
-                        "iyr" => iyr = true,
-                        "eyr" => eyr = true,
-                        "hgt" => hgt = true,
-                        "hcl" => hcl = true,
-                        "ecl" => ecl = true,
-                        "pid" => pid = true,
-                        "cid" => cid = true,
-                        _      => {
-                                println!("Error")
-                                }
-                        }
-                    } 
-                    if byr && iyr && eyr && hgt && hcl && ecl && pid
-                    {
-                        valid_passports += 1;
+                        "byr" => passport.byr = String::from(key_values[1]),
+                        "iyr" => passport.iyr = String::from(key_values[1]),
+                        "eyr" => passport.eyr = String::from(key_values[1]),
+                        "hgt" => passport.hgt = String::from(key_values[1]),
+                        "hcl" => passport.hcl = String::from(key_values[1]),
+                        "ecl" => passport.ecl = String::from(key_values[1]),
+                        "pid" => passport.pid = String::from(key_values[1]),
+                        "cid" => passport.cid = String::from(key_values[1]),
+                        _ => println!("Error")
+                        
                     }
                 }
-                else
-                {
-                    passports_processed += 1;
-                    byr = false; //(Birth Year)
-                    iyr = false; //(Issue Year)
-                    eyr = false; //(Expiration Year)
-                    hgt = false; //(Height)
-                    hcl = false; //(Hair Color)
-                    ecl = false; //(Eye Color)
-                    pid = false; //(Passport ID)
-                    cid = false; //(Country ID) - Optional
-                }
-                
-                (String::from(key_values[0]), String::from(key_values[1]))
-        }).collect();
+            }
+            
+            passport_count
+        }).sum();
 
-        (valid_passports, tokens)
-
+    println!("Count: {}", count);
+    
+    passports
 }
 
 // fn part2(content: &String) -> u64 {
@@ -118,17 +189,17 @@ ecl:gry byr:1939
 pid:935099157 eyr:2027
 "#;
 
-    // #[test]
-    // fn testcase1() {
-    //     let content = String::from(TEST_INPUT);
-    //     let (count, _passports) = part1(&content);
-    //     assert_eq!(count, 2);
-    // }
+    #[test]
+    fn testcase1() {
+        let content = String::from(TEST_INPUT);
+        let count = part1(&content);
+        assert_eq!(count, 2);
+    }
 
     #[test]
     fn testcase2() {
         let content = String::from(TEST_INPUT2);
-        let (count, _passports) = part1(&content);
+        let count = part1(&content);
         assert_eq!(count, 5);
     }
 }
@@ -138,10 +209,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let content = std::fs::read_to_string(&filename)?;
 
+    let passports = read_passports(&content);
+
     //let mut part1_answer: u64 = 0;
     //let mut passports: Vec<HashMap<String, String>> = Vec::new();
 
-    let (part1_answer, _passports) = part1(&content);
+    let part1_answer = part1(passports);
 
     println!("Part1 Answer: {}", part1_answer);
 
