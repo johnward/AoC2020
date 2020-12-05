@@ -192,14 +192,16 @@ pid:935099157 eyr:2027
     #[test]
     fn testcase1() {
         let content = String::from(TEST_INPUT);
-        let count = part1(&content);
+        let passports = read_passports(&content);
+        let count = part1(passports);
         assert_eq!(count, 2);
     }
 
     #[test]
     fn testcase2() {
         let content = String::from(TEST_INPUT2);
-        let count = part1(&content);
+        let passports = read_passports(&content);
+        let count = part1(passports);
         assert_eq!(count, 5);
     }
 }
