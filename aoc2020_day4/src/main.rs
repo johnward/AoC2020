@@ -1,7 +1,6 @@
 use std::env::args;
 use std::result::Result;
 
-
 #[derive(Debug, Clone)]
 struct Passport {
     byr: String, //(Birth Year)
@@ -24,24 +23,26 @@ impl Passport {
             hcl: String::from(""), //(Hair Color)
             ecl: String::from(""), //(Eye Color)
             pid: String::from(""), //(Passport ID)
-            cid: String::from(""),    
+            cid: String::from(""),
         }
     }
 
     pub fn isvalid(&self) -> bool {
-        self.byr != "" && self.iyr != "" && self.eyr != "" && self.hgt != "" && self.hcl != "" && self.ecl != "" && self.pid != ""
+        self.byr != ""
+            && self.iyr != ""
+            && self.eyr != ""
+            && self.hgt != ""
+            && self.hcl != ""
+            && self.ecl != ""
+            && self.pid != ""
     }
 }
 
 fn part1(passports: Vec<Passport>) -> usize {
-    passports.iter()
-        .map(|p| {
-            if p.isvalid() {
-                1
-            } else {
-                0
-            }
-        }).sum()
+    passports
+        .iter()
+        .map(|p| if p.isvalid() { 1 } else { 0 })
+        .sum()
 }
 
 // fn part1(content: &String) -> (u64, Vec<HashMap<String, String>>) {
@@ -67,7 +68,7 @@ fn part1(passports: Vec<Passport>) -> usize {
 //                                 println!("Error")
 //                                 }
 //                         }
-//                     } 
+//                     }
 //                     if byr && iyr && eyr && hgt && hcl && ecl && pid
 //                     {
 //                         valid_passports += 1;
@@ -85,7 +86,7 @@ fn part1(passports: Vec<Passport>) -> usize {
 //                     pid = false; //(Passport ID)
 //                     cid = false; //(Country ID) - Optional
 //                 }
-                
+
 //                 (String::from(key_values[0]), String::from(key_values[1]))
 //         }).collect();
 
@@ -94,20 +95,21 @@ fn part1(passports: Vec<Passport>) -> usize {
 // }
 
 fn read_passports(content: &String) -> Vec<Passport> {
-
     let mut passports: Vec<Passport> = Vec::new();
     let mut passport_count = 0;
     let mut passport = Passport::new();
+    let mut valid_passport = 0;
 
-    let count: usize = content.split_whitespace()
-    .map( |s| {
-        if s == "" {
-            passport_count += 1;
-            passports.push(passport.clone()); // push existing passport as it is complete
-            passport = Passport::new(); // create a new passport
-        } else {
-            let key_values: Vec<&str>= s.split(|t| t == ':').collect();
-                    if key_values.len() == 2 {
+    let count: usize = content.split(|c| c == ' ' || c == '\n')
+        .map(|s| {
+            if s == "" {
+                passport_count += 1;
+                passports.push(passport.clone()); // push existing passport as it is complete
+                passport = Passport::new(); // create a new passport
+                valid_passport = 1;
+            } else {
+                let key_values: Vec<&str> = s.split(|t| t == ':').collect();
+                if key_values.len() == 2 {
                     match key_values[0] {
                         "byr" => passport.byr = String::from(key_values[1]),
                         "iyr" => passport.iyr = String::from(key_values[1]),
@@ -117,24 +119,24 @@ fn read_passports(content: &String) -> Vec<Passport> {
                         "ecl" => passport.ecl = String::from(key_values[1]),
                         "pid" => passport.pid = String::from(key_values[1]),
                         "cid" => passport.cid = String::from(key_values[1]),
-                        _ => println!("Error")
-                        
+                        _ => println!("Error"),
                     }
                 }
+                valid_passport = 0;
             }
-            
-            passport_count
-        }).sum();
+
+            valid_passport
+        })
+        .sum();
 
     println!("Count: {}", count);
-    
+
     passports
 }
 
 // fn part2(content: &String) -> u64 {
 //     0
 // }
-
 
 #[cfg(test)]
 mod test {
