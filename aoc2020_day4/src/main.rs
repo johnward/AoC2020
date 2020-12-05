@@ -1,5 +1,6 @@
 use std::env::args;
 use std::result::Result;
+use regex::Regex;
 
 #[derive(Debug, Clone)]
 struct Passport {
@@ -38,13 +39,57 @@ impl Passport {
     }
 
     pub fn isvalid_strict(&self) -> bool {
-        self.byr != ""
-            && self.iyr != ""
-            && self.eyr != ""
-            && self.hgt != ""
-            && self.hcl != ""
-            && self.ecl != ""
-            && self.pid != ""
+        let mut isvalid = false;
+        
+        let re = Regex::new(r"^\d{4}$").unwrap();
+        if re.is_match(self.byr.as_str()) {
+            let number: i32 = self.byr.as_str().parse().unwrap_or(0);
+
+            isvalid = number >= 1920 && number <= 2002 
+        }
+
+        if isvalid && re.is_match(self.iyr.as_str()) {
+            let number: i32 = self.iyr.as_str().parse().unwrap_or(0);
+
+            isvalid = number >= 2010 && number <= 2020;
+        }
+
+        if isvalid && re.is_match(self.eyr.as_str()) {
+            let number: i32 = self.eyr.as_str().parse().unwrap_or(0);
+
+            isvalid = number >= 2020 && number <= 2030;
+        }
+
+        let re = Regex::new(r"^\d{3}cm$").unwrap();
+        if isvalid && re.is_match(self.hgt.as_str()) {
+            let cm_height = &self.hgt[0..3];
+            let number: i32 = cm_height.parse().unwrap_or(0);
+
+            isvalid = number >= 150 && number <= 193;
+        }
+
+        let re = Regex::new(r"^\d{2}in$").unwrap();
+        if isvalid && re.is_match(self.hgt.as_str()) {
+            let in_height = &self.hgt[0..3];
+            let number: i32 = in_height.parse().unwrap_or(0);
+
+            isvalid = number >= 59 && number <= 76;
+        }
+
+        if isvalid {
+            let re = Regex::new(r"^#[a-fA-F0-9]{6,}$").unwrap();
+            isvalid = re.is_match(self.hcl.as_str());
+        }
+
+        isvalid = self.ecl == "amb" || self.ecl == "blu" || self.ecl == "brn"  
+        || self.ecl == "brn" || self.ecl == "grn"|| self.ecl == "hzl" || self.ecl == "oth";
+
+        if isvalid {
+            let re = Regex::new(r"^\d{6}$").unwrap();
+            isvalid = re.is_match(self.pid.as_str());
+        }
+
+        isvalid
     }
 }
 
