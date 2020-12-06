@@ -46,47 +46,63 @@ impl Passport {
             let number: i32 = self.byr.as_str().parse().unwrap_or(0);
 
             isvalid = number >= 1920 && number <= 2002 
+        } else {
+            isvalid = false;
         }
 
         if isvalid && re.is_match(self.iyr.as_str()) {
             let number: i32 = self.iyr.as_str().parse().unwrap_or(0);
 
             isvalid = number >= 2010 && number <= 2020;
+        } else {
+            isvalid = false;
         }
 
         if isvalid && re.is_match(self.eyr.as_str()) {
             let number: i32 = self.eyr.as_str().parse().unwrap_or(0);
 
             isvalid = number >= 2020 && number <= 2030;
+        } else {
+            isvalid = false;
         }
 
-        let re = Regex::new(r"^\d{3}cm$").unwrap();
-        if isvalid && re.is_match(self.hgt.as_str()) {
+        let re_cm = Regex::new(r"^\d{3}cm$").unwrap();
+        let re_in = Regex::new(r"^\d{2}in$").unwrap();
+
+        if isvalid && re_cm.is_match(self.hgt.as_str()) {
             let cm_height = &self.hgt[0..3];
             let number: i32 = cm_height.parse().unwrap_or(0);
 
             isvalid = number >= 150 && number <= 193;
-        }
-
-        let re = Regex::new(r"^\d{2}in$").unwrap();
-        if isvalid && re.is_match(self.hgt.as_str()) {
-            let in_height = &self.hgt[0..3];
+        } else if isvalid && re_in.is_match(self.hgt.as_str()) {
+            let in_height = &self.hgt[0..2];
             let number: i32 = in_height.parse().unwrap_or(0);
 
             isvalid = number >= 59 && number <= 76;
+        } else {
+            isvalid = false;
         }
 
         if isvalid {
             let re = Regex::new(r"^#[a-fA-F0-9]{6,}$").unwrap();
             isvalid = re.is_match(self.hcl.as_str());
+        } else {
+            isvalid = false;
         }
 
-        isvalid = self.ecl == "amb" || self.ecl == "blu" || self.ecl == "brn"  
-        || self.ecl == "brn" || self.ecl == "grn"|| self.ecl == "hzl" || self.ecl == "oth";
+        //amb blu brn gry grn hzl oth
+        if isvalid {
+            isvalid = self.ecl == "amb" || self.ecl == "blu" || self.ecl == "brn"  
+            || self.ecl == "gry" || self.ecl == "grn"|| self.ecl == "hzl" || self.ecl == "oth";
+        } else {
+            isvalid = false;
+        }
 
         if isvalid {
-            let re = Regex::new(r"^\d{6}$").unwrap();
+            let re = Regex::new(r"^\d{9}$").unwrap();
             isvalid = re.is_match(self.pid.as_str());
+        } else {
+            isvalid = false;
         }
 
         isvalid
@@ -204,7 +220,7 @@ pid:935099157 eyr:2027
     fn testcase1() {
         let content = String::from(TEST_INPUT);
         let passports = read_passports(&content);
-        let count = part1(passports);
+        let count = part1(&passports);
         assert_eq!(count, 2);
     }
 
@@ -212,7 +228,15 @@ pid:935099157 eyr:2027
     fn testcase2() {
         let content = String::from(TEST_INPUT2);
         let passports = read_passports(&content);
-        let count = part1(passports);
+        let count = part1(&passports);
+        assert_eq!(count, 5);
+    }
+
+    #[test]
+    fn testcase3() {
+        let content = String::from(TEST_INPUT);
+        let passports = read_passports(&content);
+        let count = part2(&passports);
         assert_eq!(count, 5);
     }
 }
@@ -227,7 +251,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("Part1 Answer: {}", part1_answer);
 
     let part2_answer = part2(&passports);
-    println!("Part1 Answer: {}", part2_answer);
+    println!("Part2 Answer: {}", part2_answer);
 
     Ok(())
 }
