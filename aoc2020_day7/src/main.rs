@@ -1,27 +1,28 @@
+use std::collections::HashMap;
 use std::env::args;
 use std::result::Result;
 
-struct Bags {
+struct BagHolder {
     bags: HashMap<String, Bag>,
 }
 
-impl Bags {
-    pub fn new() -> Bag {
-        Bag {
+impl BagHolder {
+    pub fn new() -> BagHolder {
+        BagHolder {
             bags: HashMap<String, Bag>::new()
         }
     }
 }
 
 struct Bag {
-    name: String,
-    bags: Vev<Bag>,
+    description: String,
+    bags: Vec<Bag>,
 }
 
 impl Bag {
-    pub fn new(name: String) -> Bag {
+    pub fn new(description: String) -> Bag {
         Bag {
-            name,
+            description,
             bags: Vec<Bag>::new()
         }
     }
@@ -47,22 +48,15 @@ fn part2(content: &String) -> usize {
 mod test {
     use super::*;
 
-    const TEST_INPUT: &str = r#"abc
-
-a
-b
-c
-
-ab
-ac
-
-a
-a
-a
-a
-
-b
-
+    const TEST_INPUT: &str = r#"light red bags contain 1 bright white bag, 2 muted yellow bags.
+dark orange bags contain 3 bright white bags, 4 muted yellow bags.
+bright white bags contain 1 shiny gold bag.
+muted yellow bags contain 2 shiny gold bags, 9 faded blue bags.
+shiny gold bags contain 1 dark olive bag, 2 vibrant plum bags.
+dark olive bags contain 3 faded blue bags, 4 dotted black bags.
+vibrant plum bags contain 5 faded blue bags, 6 dotted black bags.
+faded blue bags contain no other bags.
+dotted black bags contain no other bags.
 "#;
 
     #[test]
@@ -80,15 +74,17 @@ b
     }
 }
 
-fn main() {
+fn main() -> Result<(), Box<dyn std::error::Error>> {
     let filename = args().nth(1).ok_or("I need a filename")?;
     let content = std::fs::read_to_string(&filename)?;
 
-    let content = String::from(TEST_INPUT);
+    let content = String::from(&content);
     let part1_answer = part1(&content);
 
-    let content = String::from(TEST_INPUT);
+    let content = String::from(&content);
     let part2_answer = part2(&content);
 
     println!("Hello, world!");
+
+    Ok(())
 }
